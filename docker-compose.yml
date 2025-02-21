@@ -1,0 +1,27 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    networks:
+      - ai_network
+
+  ai_agent:
+    build: ./app
+    container_name: ai_agent_container
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - ai_network
+    volumes:
+      - ./app:/usr/src/app  # Mounts the local 'app' directory into the container
+    command: python main.py
+
+networks:
+  ai_network:
+    driver: bridge
