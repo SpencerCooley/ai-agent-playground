@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   redis:
     image: redis:latest
@@ -16,10 +18,13 @@ services:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SSH_AUTH_SOCK=/ssh-agent
     networks:
       - ai_network
     volumes:
-      - ./app:/usr/src/app  # Mounts the local 'app' directory into the container
+      - ./app:/usr/src/app
+      - ./project:/usr/src/project
+      - ${SSH_AUTH_SOCK}:/ssh-agent 
     command: python main.py
 
 networks:

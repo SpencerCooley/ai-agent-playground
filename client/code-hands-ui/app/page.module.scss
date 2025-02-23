@@ -1,0 +1,36 @@
+// app/page.module.scss
+
+.page {
+  height: 100%; // Fill the full height of the body
+  width: 100%;  // Fill the full width of the body
+  display: flex; // Use flexbox to manage nested elements
+  flex-direction: column; // Stack main and footer vertically
+
+  .main {
+    display:flex;
+    flex: 1; // Expand to fill available space
+    overflow-y: auto; // Scroll internally if content overflows
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+  
+
+    // Page-specific dark mode tweak (no color changes)
+    :global(html.dark) & {
+      h1 {
+        text-decoration: underline; // Structural tweak, not color
+      }
+    }
+  }
+
+  .footer {
+    flex-shrink: 0; // Don’t shrink, keep fixed height
+    padding: 10px;
+    text-align: center;
+
+    // Page-specific dark mode tweak (no color changes)
+    :global(html.dark) & {
+      border-top: 1px solid var(--foreground); // Use global color variable
+    }
+  }
+}
