@@ -19,19 +19,8 @@ GIT_REPO_ADDRESS=address used for the project you are working on
 ```
 Replace `your_openai_api_key` with your actual OpenAI API key.
 
-### 2. Use an ssh agent to use your host machine ssh key
-to avoid too much configureation the container can use the ssh key from your host machine to do things
 
-```bash
-# Start the SSH agent
-eval "$(ssh-agent -s)"
-
-# Add your SSH key to the agent so it's available in the Docker container
-ssh-add ~/.ssh/id_ed25519  # Use this for modern keys (or ~/.ssh/id_rsa if using RSA)
-
-```
-
-### 3. Build and Start the Containers
+### 2. Build and Start the Containers
 To build and start the containers, run:
 
 ```bash
@@ -39,17 +28,17 @@ docker-compose up --build
 ```
 This command will build both the Redis and AI agent containers and start them.
 
-### 4. Running the Agent
+### 3. Running the Agent
 The AI agent will run and display its output in the terminal. Any code changes to `main.py` will reflect immediately without needing to rebuild.
 
-### 5. Stopping the Containers
+### 4. Stopping the Containers
 To stop and remove the containers, run:
 
 ```bash
 docker-compose down
 ```
 
-### 6. Rebuilding Without Cache
+### 5. Rebuilding Without Cache
 If you need to rebuild without using Docker’s cache, use:
 
 ```bash
