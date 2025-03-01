@@ -15,7 +15,6 @@ Create a `.env` file in the root directory (same level as `docker-compose.yml`) 
 REDIS_HOST=redis
 REDIS_PORT=6379
 OPENAI_API_KEY=your_openai_api_key
-GIT_REPO_ADDRESS=address used for the project you are working on
 ```
 Replace `your_openai_api_key` with your actual OpenAI API key.
 
