@@ -1,6 +1,7 @@
 langchain
 langchain_community
 langchain_openai
+langchain_xai
 pydantic-ai
 redis
 uvicorn
