@@ -1,40 +1,40 @@
 /* app/components/PromptBox.module.scss */
 
 .promptBoxContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 30%;
-  min-height:100px;
-  width: 50%;
-  background-color: var(--background-secondary);
-  color: var(--foreground);
+  width: 100%;
+  background: var(--background);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-  transition: all 0.3s ease;
-}
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
 
-.promptBox {
-  width: 80%;
-  max-width: 700px;
-  padding: 12px 16px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background-color: var(--background-tertiary);
-  color: var(--foreground);
-  font-size: 16px;
-  line-height: 1.5;
-  outline: none;
-  transition: all 0.3s ease;
+  .promptBox {
+    width: 100%;
+    min-height: 24px;
+    max-height: 150px; // Prevents textarea from growing too tall
+    resize: none;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 0;
+    outline: none;
+    color: var(--foreground);
+    
+    &::placeholder {
+      color: var(--foreground-muted);
+      opacity: 0.6;
+    }
 
-  &::placeholder {
-    color: var(--text-tertiary);
+    &:focus {
+      outline: none;
+    }
   }
 
-  &:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 5px var(--accent);
+  // Dark mode specific styles
+  :global(html.dark) & {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 }
 

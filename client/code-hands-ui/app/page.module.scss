@@ -7,9 +7,10 @@
   flex-direction: column; // Stack main and footer vertically
 
   .main {
-    display:flex;
+    display: flex;
     flex: 1; // Expand to fill available space
-    overflow-y: auto; // Scroll internally if content overflows
+    flex-direction: column; // Stack response area and prompt box vertically
+    overflow-y: hidden; // Prevent main container from scrolling
     padding: 20px;
     justify-content: center;
     align-items: center;
@@ -24,7 +25,7 @@
   }
 
   .footer {
-    flex-shrink: 0; // Don’t shrink, keep fixed height
+    flex-shrink: 0; // Don't shrink, keep fixed height
     padding: 10px;
     text-align: center;
 
@@ -33,4 +34,35 @@
       border-top: 1px solid var(--foreground); // Use global color variable
     }
   }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+
+  .responseArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: var(--background-subtle);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .promptBoxWrapper {
+    padding: 20px;
+    background: var(--background);
+    border-top: 1px solid var(--border);
+    position: sticky;
+    bottom: 0;
+  }
+}
+
+:root {
+  --background-subtle: #f8f9fa;  /* Light subtle shade for light mode */
+}
+
+.darkTheme {
+  --background-subtle: #131827;  /* Dark subtle shade for dark mode */
 }

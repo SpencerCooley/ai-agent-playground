@@ -43,6 +43,12 @@
   --warning: #ff9800;
   --error: #f44336;
   --info: #2196f3;
+
+  --background-subtle: #142e47;
+}
+
+html[data-theme='dark'] {
+  --background-subtle: #1a1b1e;  // Dark subtle shade for dark mode
 }
 
 // ========================================
