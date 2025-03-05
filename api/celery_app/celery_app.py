@@ -15,5 +15,7 @@ celery_app.conf.update(
     enable_utc=True
 )
 
+from celery_app import tasks    
+
 if __name__ == "__main__":
     celery_app.start()

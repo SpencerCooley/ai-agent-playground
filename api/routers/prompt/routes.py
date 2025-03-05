@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, WebSocket
 from fastapi.websockets import WebSocketDisconnect
 from pydantic import BaseModel
 from typing import Optional
-from api.dependencies.llm import ProviderType
-from api.celery_app.tasks import process_prompt
+from dependencies.llm import ProviderType
+from celery_app.tasks import process_prompt
 import asyncio
 from celery.result import AsyncResult
 

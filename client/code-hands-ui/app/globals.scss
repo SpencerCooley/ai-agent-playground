@@ -6,27 +6,27 @@
 :root {
   // Light Theme Colors
   --light-bg-primary: #ffffff;
-  --light-bg-secondary: #f7f7f7;
-  --light-bg-tertiary: #eaeaea;
+  --light-bg-secondary: #f5f5f5;    // Clean light gray
+  --light-bg-tertiary: #e8e8e8;     // Subtle gray
 
-  --light-text-primary: #000000;
-  --light-text-secondary: #555555;
-  --light-text-tertiary: #888888;
+  --light-text-primary: #202020;     // Soft black
+  --light-text-secondary: #404040;   // Medium gray
+  --light-text-tertiary: #606060;    // Light gray
 
-  --light-border: #cccccc;
-  --light-accent: #4a90e2;
+  --light-border: #d4d4d4;           // Neutral border
+  --light-accent: #404040;           // Monochrome accent
 
   // Dark Theme Colors
-  --dark-bg-primary: #1a1a1a;
-  --dark-bg-secondary: #2b2b2b;
-  --dark-bg-tertiary: #3a3a3a;
+  --dark-bg-primary: #121212;        // Rich dark
+  --dark-bg-secondary: #1f1f1f;      // Elevated dark
+  --dark-bg-tertiary: #2d2d2d;       // Subtle lift
 
-  --dark-text-primary: #ffffff;
-  --dark-text-secondary: #d3d3d3;
-  --dark-text-tertiary: #a9a9a9;
+  --dark-text-primary: #ffffff;       // Pure white
+  --dark-text-secondary: #d4d4d4;     // Light gray
+  --dark-text-tertiary: #a0a0a0;      // Medium gray
 
-  --dark-border: #444444;
-  --dark-accent: #4a90e2;
+  --dark-border: #404040;             // Dark border
+  --dark-accent: #e0e0e0;             // Light accent for dark mode
 
   // Shared Neutral Colors
   --neutral-100: #f5f5f5;
@@ -44,7 +44,7 @@
   --error: #f44336;
   --info: #2196f3;
 
-  --background-subtle: #142e47;
+  --background-subtle: #f8f9fa;
 }
 
 html[data-theme='dark'] {

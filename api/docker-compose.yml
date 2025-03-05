@@ -25,6 +25,7 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - PYTHONPATH=/app
     ports:
       - "127.0.0.1:8000:8000"
     volumes:

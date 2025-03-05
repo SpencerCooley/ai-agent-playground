@@ -4,10 +4,21 @@
   width: 100%;
   background: var(--background);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
+  transition: box-shadow 0.2s ease-in-out;
+
+  &:has(.promptBox:focus) {
+    box-shadow: 0 0 12px rgba(64, 64, 64, 0.7);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:has(.promptBox:focus) {
+      box-shadow: 0 0 12px rgba(224, 224, 224, 0.1);
+    }
+  }
 
   .promptBox {
     width: 100%;

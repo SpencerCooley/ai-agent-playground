@@ -6,52 +6,28 @@ import { useChat } from '../context/ChatContext';
 import ApiService from '../services/api';
 
 export default function PromptBox() {
-    const { theme, toggleTheme } = useTheme(); 
-    const { setTaskId, setResponse, setError, setIsComplete } = useChat();
-    const [prompt, setPrompt] = useState<string>("");
-    const [isLoading, setIsLoading] = useState(false);
+    const { theme } = useTheme(); 
+    const { setPrompt } = useChat();
+    const [inputValue, setInputValue] = useState<string>("");
 
-    // Handle textarea value change
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setPrompt(e.target.value);
+        setInputValue(e.target.value);
     };
 
-    // Handle Enter key press
     const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) { 
             e.preventDefault(); 
-            console.log("Enter pressed with value:", prompt);
-
-            setPrompt(""); 
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-        
-        // Reset states for new submission
-        setResponse('');
-        setError(null);
-        setIsComplete(false);
-
-        try {
-            const response = await ApiService.submitPrompt({ prompt });
-            setTaskId(response.task_id);
-        } catch (error) {
-            setError('Failed to submit prompt');
-            console.error('Error:', error);
-        } finally {
-            setIsLoading(false);
+            setPrompt(inputValue);
+            setInputValue(""); 
         }
     };
 
     return (
         <div className={`${styles.promptBoxContainer} ${theme}`}>
             <textarea
-                value={prompt}
+                value={inputValue}
                 onChange={handleChange}
-                onKeyDown={handleKeyDown} // Capture Enter key press
+                onKeyDown={handleKeyDown}
                 className={styles.promptBox}
                 placeholder="Type here and press Enter..."
             />

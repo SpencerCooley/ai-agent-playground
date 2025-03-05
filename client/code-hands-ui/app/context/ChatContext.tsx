@@ -3,8 +3,10 @@
 import React, { createContext, useContext, useState, ReactNode, JSX } from "react";
 
 interface ChatContextType {
-  taskId: string | null;
-  setTaskId: (taskId: string | null) => void;
+  prompt: string;
+  setPrompt: (prompt: string) => void;
+  taskId: string;
+  setTaskId: (id: string) => void;
   response: string;
   setResponse: (response: string) => void;
   error: string | null;
@@ -13,38 +15,20 @@ interface ChatContextType {
   setIsComplete: (isComplete: boolean) => void;
 }
 
-const ChatContext = createContext<ChatContextType>({
-  taskId: null,
-  setTaskId: () => {},
-  response: "",
-  setResponse: () => {},
-  error: null,
-  setError: () => {},
-  isComplete: false,
-  setIsComplete: () => {},
-});
+const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-export const useChat = () => {
-  const context = useContext(ChatContext);
-  if (!context) {
-    throw new Error("useChat must be used within a ChatProvider");
-  }
-  return context;
-};
-
-interface ChatProviderProps {
-  children: ReactNode;
-}
-
-export const ChatProvider = ({ children }: ChatProviderProps): JSX.Element => {
-  const [taskId, setTaskId] = useState<string | null>(null);
-  const [response, setResponse] = useState<string>("");
+export function ChatProvider({ children }: { children: React.ReactNode }) {
+  const [prompt, setPrompt] = useState<string>('');
+  const [taskId, setTaskId] = useState<string>('');
+  const [response, setResponse] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [isComplete, setIsComplete] = useState<boolean>(false);
 
   return (
-    <ChatContext.Provider 
+    <ChatContext.Provider
       value={{
+        prompt,
+        setPrompt,
         taskId,
         setTaskId,
         response,
@@ -58,4 +42,12 @@ export const ChatProvider = ({ children }: ChatProviderProps): JSX.Element => {
       {children}
     </ChatContext.Provider>
   );
-}; 
+}
+
+export function useChat() {
+  const context = useContext(ChatContext);
+  if (context === undefined) {
+    throw new Error('useChat must be used within a ChatProvider');
+  }
+  return context;
+} 
