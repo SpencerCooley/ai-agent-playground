@@ -19,3 +19,4 @@ google-cloud-storage
 pytest
 httpx
 python-dotenv
+websockets
