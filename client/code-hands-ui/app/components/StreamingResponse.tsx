@@ -14,32 +14,55 @@ export default function StreamingResponse() {
     isComplete,
     setIsComplete
   } = useChat();
-
-  useEffect(() => {
-    if (!taskId) return;
-
-    const ws = new WebSocket(`ws://localhost:8000/prompt/ws/${taskId}`);
-
+  
+  const handleWsMessages = (ws: WebSocket) => {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      
+      console.log('Received message:', {
+        timestamp: new Date().toISOString(),
+        type: data.type,
+        content: data.content
+      });
+
       if (data.type === 'error') {
         setError(data.content);
       } else if (data.type === 'token') {
+        console.log('Token received:', data.content);
         setResponse((prev: string) => prev + data.content);
       } else if (data.type === 'complete') {
+        console.log('Stream complete');
         setIsComplete(true);
       }
+    }
+  }
+
+  // when a new token id is set start the response stream
+  useEffect(() => {
+    if (!taskId) return;
+
+    console.log('Connecting to WebSocket...');
+    const ws = new WebSocket(`ws://localhost:8000/prompt/ws/${taskId}`);
+
+    ws.onopen = () => {
+      console.log('WebSocket connection established');
     };
 
-    ws.onerror = () => {
+    handleWsMessages(ws);
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
       setError('WebSocket error occurred');
     };
 
+    ws.onclose = (event) => {
+      console.log('WebSocket closed:', event.code, event.reason);
+    };
+
     return () => {
+      console.log('Cleaning up WebSocket connection');
       ws.close();
     };
-  }, [taskId, setResponse, setError, setIsComplete]);
+  }, [taskId]);
 
   if (error) {
     return <div className={styles.error}>{error}</div>;
