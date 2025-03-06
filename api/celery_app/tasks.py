@@ -1,5 +1,5 @@
 from celery_app.celery_app import celery_app
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 from typing import Optional
 from celery import states
 from celery.utils.log import get_task_logger
@@ -16,13 +16,20 @@ redis_client = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
 class StreamingCallbackHandler(BaseCallbackHandler):
     def __init__(self, task_id: str):
         self.task_id = task_id
+        self.last_token = None  # Add this to track the last token
 
     def on_llm_new_token(self, token: str, **kwargs) -> None:
-        logger.info(f"New token for task {self.task_id}: {token}")
+        # Skip if this is a duplicate token
+        if token == self.last_token:
+            return
+        self.last_token = token
+        print("LOOOK HEREEEE")
+        print(token)
+        # logger.info(f"Publishing token for task {self.task_id}: {token}")
         redis_client.publish(f"task:{self.task_id}", token)
 
     def on_llm_end(self, response, **kwargs) -> None:
-        logger.info(f"LLM processing complete for task {self.task_id}")
+        # logger.info(f"LLM processing complete for task {self.task_id}")
         redis_client.publish(f"task:{self.task_id}", "[DONE]")
 
 MODEL_CONFIG = {
@@ -72,7 +79,21 @@ def process_prompt(self, prompt: str, model: Optional[str] = None) -> dict:
                     callbacks=[StreamingCallbackHandler(self.request.id)],
                     temperature=1
                 )
+
                 logger.info(f"Initialized ChatOpenAI with model: {model_config['model_name']}")
+                
+                self.update_state(state=states.STARTED, meta={"status": "Processing prompt"})
+                logger.info(f"Processing prompt: {prompt} with model: {model} (task_id: {self.request.id})")
+                
+                full_response = ""
+                logger.info("Starting LangChain streaming...")
+                for chunk in llm.stream(prompt):
+                    logger.info(f"Received chunk: {chunk.content}")
+                    full_response += chunk.content
+                
+                logger.info("LangChain streaming complete")
+                return {"response": full_response, "model": model, "status": "success"}
+                
             except Exception as langchain_error:
                 logger.warning(f"LangChain failed: {str(langchain_error)}. Falling back to raw OpenAI client.")
                 # Fallback to raw OpenAI client
@@ -86,10 +107,7 @@ def process_prompt(self, prompt: str, model: Optional[str] = None) -> dict:
                 for chunk in stream:
                     if chunk.choices[0].delta.content:
                         content = chunk.choices[0].delta.content
-                        redis_client.publish(f"task:{self.request.id}", content)
                         full_response += content
-                redis_client.publish(f"task:{self.request.id}", "[DONE]")
-                logger.info(f"Completed processing with raw OpenAI client. Response: {full_response}")
                 return {"response": full_response, "model": model, "status": "success"}
         
         self.update_state(state=states.STARTED, meta={"status": "Processing prompt"})

@@ -64,6 +64,7 @@ async def websocket_endpoint(websocket: WebSocket, channel_id: str):
     Agnostic WebSocket endpoint for streaming messages from a Redis channel.
     Messages are expected to be published to 'task:<channel_id>'.
     """
+    print("Look Here")
     await websocket.accept()
     print(f"WebSocket connected to channel task:{channel_id}")
     
@@ -71,16 +72,33 @@ async def websocket_endpoint(websocket: WebSocket, channel_id: str):
     pubsub = redis_client.pubsub()
     channel = f"task:{channel_id}"
     
+    # Keep track of processed messages to prevent duplicates
+    processed_messages = set()
+    
     try:
         pubsub.subscribe(channel)
-        print(f"Subscribed to Redis channel {channel}")
+        
+        # Get number of subscribers for this channel
+        num_subscribers = redis_client.pubsub_numsub(channel)[0][1]
+        print(f"Channel {channel} has {num_subscribers} subscriber(s)")
 
         # Listen for messages indefinitely until client disconnects or [DONE]/[ERROR]
         while True:
             message = pubsub.get_message(timeout=0.1)
             if message and message['type'] == 'message':
+                # Recheck number of subscribers periodically
+                current_subscribers = redis_client.pubsub_numsub(channel)[0][1]
+                print(f"Current subscribers to {channel}: {current_subscribers}")
+                
                 data = message['data']
-                print(f"Received message on {channel}: {data}")
+                
+                # Skip if we've already processed this message
+                message_hash = hash(str(message))
+                if message_hash in processed_messages:
+                    continue
+                processed_messages.add(message_hash)
+                
+                print(f"Received message on {channel}")
                 if data == "[DONE]":
                     await websocket.send_json({
                         "type": "complete",
@@ -94,6 +112,7 @@ async def websocket_endpoint(websocket: WebSocket, channel_id: str):
                     })
                     break
                 else:
+                    print(f"Sending token to WebSocket: {data}")
                     await websocket.send_json({
                         "type": "token",
                         "content": data
@@ -102,6 +121,9 @@ async def websocket_endpoint(websocket: WebSocket, channel_id: str):
 
     except WebSocketDisconnect:
         print(f"Client disconnected from channel {channel_id}")
+        # Get final subscriber count after disconnect
+        final_subscribers = redis_client.pubsub_numsub(channel)[0][1]
+        print(f"Channel {channel} now has {final_subscribers} subscriber(s)")
     except Exception as e:
         print(f"WebSocket error for channel {channel_id}: {str(e)}")
         await websocket.send_json({
