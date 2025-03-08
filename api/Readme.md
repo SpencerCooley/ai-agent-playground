@@ -3,6 +3,26 @@
 ## Overview
 This repository contains a backend for creating an AI agent. It is built with FastAPI, Celery, and Redis. Everything is containerized and can be run locally.
 
+## System Design
+The application follows a distributed architecture pattern with the following key components:
+
+![System Architecture Diagram](docs/system-architecture.png)
+
+### Components
+- **FastAPI Backend**: Handles HTTP requests and serves as the main API gateway
+- **Celery Workers**: Process asynchronous tasks and long-running operations
+- **Redis**: Serves dual purposes:
+  - Message broker for Celery task queue
+  - Caching layer for temporary data storage
+- **PostgreSQL**: Persistent storage for application data
+
+### Data Flow
+1. Clients send requests to the FastAPI backend
+2. For long-running operations, the backend dispatches tasks to Celery workers via Redis
+3. Celery workers process tasks asynchronously and publish results to Redis
+4. Websocket endpoints are used to stream results to the client by subscribing to Redis channels.
+5. Permanent data is stored in PostgreSQL.
+
 ## Prerequisites
 - Docker and Docker Compose installed on your system.
 
