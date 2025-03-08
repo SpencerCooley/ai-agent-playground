@@ -6,7 +6,7 @@ This repository contains a backend for creating an AI agent. It is built with Fa
 ## System Design
 The application follows a distributed architecture pattern with the following key components:
 
-![System Architecture Diagram](docs/system-architecture.png)
+![System Architecture Diagram](../static/system-architecture.png)
 
 ### Components
 - **FastAPI Backend**: Handles HTTP requests and serves as the main API gateway
