@@ -20,3 +20,4 @@ pytest
 httpx
 python-dotenv
 websockets
+watchdog>=2.0.0

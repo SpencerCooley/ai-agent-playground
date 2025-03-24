@@ -37,7 +37,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.celery  
-    command: celery -A celery_app.celery_app worker --loglevel=info -c 4
+    command: watchmedo auto-restart --directory=/app/celery_app --pattern="*.py" --recursive -- celery -A celery_app.celery_app worker --loglevel=info -c 4
     # command: "tail -f /dev/null"
     volumes:
       - .:/app
