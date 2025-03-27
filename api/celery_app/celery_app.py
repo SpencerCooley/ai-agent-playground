@@ -1,19 +1,17 @@
 from celery import Celery
-from .config import CELERY_BROKER_URL, CELERY_RESULT_BACKEND
+from .config import CELERY_BROKER_URL, CELERY_RESULT_BACKEND, CeleryConfig
 
 celery_app = Celery(
-    "celery_worker",
+    "celery_app",
     broker=CELERY_BROKER_URL,
-    backend=CELERY_RESULT_BACKEND
+    backend=CELERY_RESULT_BACKEND,
 )
 
-celery_app.conf.update(
-    task_serializer='json',
-    result_serializer='json',
-    accept_content=['json'],
-    timezone='UTC',
-    enable_utc=True
-)
+# Configure using the CeleryConfig class
+celery_app.config_from_object(CeleryConfig)
+
+# Optional: Set namespace for environment variables
+celery_app.conf.namespace = 'CELERY'
 
 from celery_app import tasks    
 

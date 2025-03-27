@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, WebSocket
 from fastapi.websockets import WebSocketDisconnect
 from pydantic import BaseModel
 from typing import Optional
-from celery_app.tasks import process_prompt_no_stream, process_with_adaptive_conversational_agent
+from celery_app.tasks import process_prompt_no_stream, process_prompt, process_with_adaptive_conversational_agent
 import asyncio
 from celery.result import AsyncResult
 import redis
@@ -38,7 +38,7 @@ async def submit_prompt(
     Submit a prompt for async processing via Celery.
     The 'model' can be provided as a query parameter (e.g., ?model=o3-mini) 
     """
-    task = process_prompt_no_stream.delay(
+    task = process_prompt.delay(
         prompt=request.prompt,
         model=model
     )
