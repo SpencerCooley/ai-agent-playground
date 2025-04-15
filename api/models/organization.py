@@ -11,4 +11,4 @@ class Organization(Base):
     description = Column(String, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
-    owner = relationship("User", back_populates="organizations")
+    # owner = relationship("User", back_populates="organizations")
