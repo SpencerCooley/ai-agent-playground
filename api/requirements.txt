@@ -10,6 +10,7 @@ SQLAlchemy
 alembic
 python-dotenv
 pydantic
+pydantic[email]
 psycopg2
 passlib
 PyJWT
@@ -23,3 +24,6 @@ websockets
 watchdog>=2.0.0
 huggingface_hub
 diffusers
+google-cloud-storage
+replicate
+sendgrid

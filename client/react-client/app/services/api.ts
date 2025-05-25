@@ -19,8 +19,30 @@ interface TaskResponse {
   result?: any;
 }
 
+interface PlanRequest {
+  intent: string;
+  plan_type: string;
+  schema: object;
+}
+
+interface PlanResponse {
+  plan: object;
+}
+
+interface ImageRequest {
+  description: string;
+  style: string;
+}
+
+interface ImageResponse {
+  image_url: string;
+}
+
+
 class ApiService {
   private static baseUrl = API_BASE_URL;
+
+
 
   static async submitPrompt(request: PromptRequest): Promise<PromptResponse> {
     try {
@@ -40,6 +62,49 @@ class ApiService {
     } catch (error) {
       console.error('Error submitting prompt:', error);
       throw error;
+    }
+  }
+
+  async generateImage(request: ImageRequest): Promise<ImageResponse> {
+    try {
+      const response = await fetch(`${ApiService.baseUrl}/tools/generate-image/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error generating image:', error);
+      throw error;
+    }
+  }
+  
+  
+  async generatePlan(request: PlanRequest): Promise<PlanResponse> {
+    try {
+      const response = await fetch(`${ApiService.baseUrl}/tools/plan/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error generating plan:', error);
+      throw error;  
     }
   }
 

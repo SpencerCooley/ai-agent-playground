@@ -19,20 +19,28 @@ services:
     container_name: fastapi_app
     restart: always
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy  # Wait for db to be healthy
+      redis:
+        condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PYTHONPATH=/app
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - API_HOST=${API_HOST}
+      - GCP_SERVICE_ACCOUNT_KEY=/app/general-purpose-jobs-0216f73edded.json
+      - GCP_BUCKET_NAME=${GCP_BUCKET_NAME}
     ports:
-      - "127.0.0.1:8000:8000"
+      - "${API_HOST}:8000:8000"  # Use the API_HOST in port binding
     volumes:
       - ./:/app
     networks:
       - ai_network
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2", "--timeout-keep-alive", "4000", "--reload"]
+    command: ["./start.sh"]  # Use the startup script instead of direct uvicorn command
   celery_workers:
     build:
       context: .
@@ -49,6 +57,8 @@ services:
       - PYTHONPATH=/app
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - GCP_SERVICE_ACCOUNT_KEY=/app/general-purpose-jobs-0216f73edded.json
+      - GCP_BUCKET_NAME=${GCP_BUCKET_NAME}
     networks:
       - ai_network
 
@@ -66,8 +76,29 @@ services:
       - "${POSTGRES_PORT}:5432"
     networks:
       - ai_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  test_db:  # Separate PostgreSQL instance for tests
+    image: postgres:13
+    container_name: postgres_test_db
+    restart: always
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: test_db
+    networks:
+      - ai_network
+    ports:
+      - "5433:5432"  # Use a different port for the test database
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+
 volumes:
   postgres_data:
+  postgres_test_data:
   redis_data:
 
 networks:

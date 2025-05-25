@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from celery_app.tasks.utils import get_default_model, MODEL_CONFIG
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import SystemMessage
@@ -20,7 +20,7 @@ router = APIRouter(
 class GeneratePlanRequest(BaseModel):
     intent: str # give some context for the plan. "I want to get stronger, but I work every monday and tuesday"
     plan_type: str # strength, endurance, mobility, etc. 
-    schema: object # tell the llm what you want your response to look like. 
+    response_schema: object # tell the llm what you want your response to look like. 
 
 class PlanResponse(BaseModel):
     plan: object #unstructured. 
@@ -60,7 +60,7 @@ async def generate_plan(plan_request: GeneratePlanRequest):
         {intent}
         
         Please format your response according to this schema:
-        {schema}
+        {response_schema}
         
         Make sure your response is valid JSON that matches the schema exactly.
         """
@@ -76,7 +76,7 @@ async def generate_plan(plan_request: GeneratePlanRequest):
         formatted_prompt = chat_prompt.format_prompt(
             plan_type=plan_request.plan_type,
             intent=plan_request.intent,
-            schema=json.dumps(plan_request.schema, indent=2)
+            schema=json.dumps(plan_request.response_schema, indent=2)
         )
         
         # Get the response from the LLM

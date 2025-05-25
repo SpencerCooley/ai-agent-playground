@@ -1,5 +1,5 @@
 # agents/agent.py
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, ConfigDict
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -13,8 +13,7 @@ class AdaptiveConversationalAgent(BaseModel):
     available_modules: dict = RESPONSE_MODULES
     max_retries: int = 3 
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __init__(self, **data):
         super().__init__(**data)

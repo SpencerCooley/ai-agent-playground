@@ -19,3 +19,5 @@ docker-compose.override.yml
 # System Files
 .DS_Store
 Thumbs.db
+
+general-purpose-jobs-0216f73edded.json
