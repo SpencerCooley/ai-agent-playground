@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
-import ThemeToggle from '../components/ThemeToggle';
+import Header from '../components/Header';
 import { useTheme } from '../context/ThemeContext';
 import styles from './storytime.module.scss';
 import ApiService from '../services/api';
@@ -64,21 +64,19 @@ export default function Home() {
     return (
         <div className={`${styles.container} ${theme === 'dark' ? styles.darkTheme : ''}`}>
             {isGenerating && <div className={styles.generatingOverlay}></div>}    
-                <div className={styles.themeToggleWrapper}>
-                    <ThemeToggle />
-                </div>
-                <div className={styles.content}>
-                    {!story ? (
-                        <StoryForm 
-                            prompt={prompt}
-                            onPromptChange={handlePromptChange}
-                            onGenerate={handleGenerate}
-                        />
-                    ) : (
-                        <StoryDisplay storyData={story} />
-                    )}
-                    
-                </div>
+            <Header />
+            <div className={styles.content}>
+                {!story ? (
+                    <StoryForm 
+                        prompt={prompt}
+                        onPromptChange={handlePromptChange}
+                        onGenerate={handleGenerate}
+                    />
+                ) : (
+                    <StoryDisplay storyData={story} />
+                )}
+                
+            </div>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { ProviderType } from '../types/api';
+type ProviderType = 'openai' | 'anthropic' | 'google';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -38,11 +38,34 @@ interface ImageResponse {
   image_url: string;
 }
 
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+interface LoginResponse {
+  token: string;
+}
 
 class ApiService {
   private static baseUrl = API_BASE_URL;
 
+  static async login(request: LoginRequest): Promise<LoginResponse> {
+    const response = await fetch(`${this.baseUrl}/auth/login/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },  
+      body: JSON.stringify(request),
+    });
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  }
+  
 
   static async submitPrompt(request: PromptRequest): Promise<PromptResponse> {
     try {

@@ -5,13 +5,17 @@ import PromptBox from './components/PromptBox';
 import StreamingResponse from './components/StreamingResponse';
 import { useChat } from './context/ChatContext';
 import { useTheme } from './context/ThemeContext';
-import ThemeToggle from './components/ThemeToggle';
+import Header from './components/Header';
 import ApiService from './services/api';
 import { useEffect } from 'react';
+import { useRequireAuth } from './hooks/useRequireAuth';
 
 let globalWs: WebSocket | null = null;
 
 export default function Home() {
+  // Protect this page - redirect to login if not authenticated
+  useRequireAuth();
+
   const { 
     prompt, 
     taskId,
@@ -31,7 +35,8 @@ export default function Home() {
         const response = await ApiService.submitPrompt({ prompt });
         setTaskId(response.task_id);
       } catch (error) {
-        setError(`Failed to process prompt: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        setError(`Failed to process prompt: ${errorMessage}`);
         console.error('InitiatePrompt error:', error);
       }
     };
@@ -47,9 +52,7 @@ export default function Home() {
   
   return (
     <div className={`${styles.container} ${theme === 'dark' ? styles.darkTheme : ''}`}>
-      <div className={styles.themeToggleWrapper}>
-        <ThemeToggle />
-      </div>
+      <Header />
       <div className={styles.responseArea}>
         {prompt && <StreamingResponse />}
       </div>
